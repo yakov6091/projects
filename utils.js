@@ -5,10 +5,10 @@ function renderBoard(mat) {
     for (var i = 0; i < mat.length; i++) {
         strHTML += `<tr>`
         for (var j = 0; j < mat[0].length; j++) {
-            const cell = mat[i][j]
+            // const cell = mat[i][j]
             const className = `cell cell-${i}-${j}`
-            strHTML += `<td class ="${className}">
-                       <onclick = "onCellClicked(gGame)">${cell} </button>
+            strHTML += `<td class ="${className}"
+                       onclick = "onCellClicked(${i},${j})">${CELL} </button>
                        </td>`
         }
         strHTML += `</tr>`
@@ -18,6 +18,11 @@ function renderBoard(mat) {
 }
 
 
+function onCellClicked(elCell, i, j) {
+    var currCell = ''
+
+
+}
 
 
 
