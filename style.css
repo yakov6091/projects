@@ -9,19 +9,45 @@ h2 {
     color: chocolate;
 }
 
+
+
 .board {
-    width: 120px;
-    height: auto;
-    background-color: rgb(6, 250, 128);
-    margin-left: auto;
-    margin-right: auto;
-    cursor: pointer;
-    padding-inline: 5px;
-    border: 5px solid green;
+    border: 5px solid rgb(37, 36, 34);
+    display: grid;
+    flex-direction: column;
+    align-items: center;
+    width: fit-content;
+    margin: 20px auto;
 
 }
 
 .cell {
-    width: 50px;
-    background-color: rgb(230, 76, 5);
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ccc;
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+    color: #333;
+
+
+}
+
+.modal p {
+    width: 150px;
+    height: 50px;
+    margin: 5% auto;
+    background-color: rgb(238, 79, 16);
+    border-radius: 10px;
+    text-align: center;
+    color: rgb(81, 15, 236);
+}
+
+.face {
+    font-size: 20px;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 10px;
+
 }

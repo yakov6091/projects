@@ -6,17 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minesweeper</title>
     <h1>Minesweeper</h1>
-    <h2>Mines: <span>0</span></h2>
+    <h2>Mines: <span>2</span></h2>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body onload="onInit()">
-
+    <button class="face" onclick="onInit()"><span></span></button>
     <div class="board">
 
     </div>
 
-    <button onclick>FLAG</button>
+    <div class="modal">
+        <p>Game Over!</p>
+
+    </div>
 
 
 
