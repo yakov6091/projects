@@ -1,5 +1,10 @@
 'use strict'
 
+function renderCell(location, value) {
+    const elCell = document.querySelector(`.cell-${location.i}-${location.j}`)
+    elCell.innerHTML = value
+}
+
 
 
 

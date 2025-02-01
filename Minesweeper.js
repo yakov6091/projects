@@ -33,6 +33,7 @@ function onInit() {
     setMinesNegsCount(gBoard)
     console.log(gBoard)
 
+
     randomMines()
 
 
@@ -68,7 +69,9 @@ function renderBoard(mat) {
 
             const className = `cell cell-${i}-${j}`
             strHTML += `<td class ="${className}"
-                       onclick = "onCellClicked(this,${i},${j})">
+                       onclick = "onCellClicked(this,${i},${j})"
+                       oncontextmenu ="setFlag(event,this,${i},${j})">
+
                        
                        </td>`
         }
@@ -89,7 +92,6 @@ function onCellClicked(elCell, i, j) {
         gButton = document.querySelector('.face')
         gButton.innerHTML = SAD
         return
-
     }
     // change the if
     if (cell.isCovered) {
@@ -97,7 +99,24 @@ function onCellClicked(elCell, i, j) {
         elCell.innerText = cell.minesAroundCount
         elCell.style.backgroundColor = 'grey'
     }
-    renderAmountOfMines()
+    // renderAmountOfMines()
+}
+
+function setFlag(event, elCell, i, j) {
+    event.preventDefault()
+    const cell = gBoard[i][j]
+    if (cell.isCovered && !cell.isMarked) { // if(true && !false = true)
+        cell.isMarked = true
+        elCell.innerHTML = FLAG
+        gMines--
+        renderAmountOfMines()
+
+    } else if (cell.isCovered && cell.isMarked) { //if(true && true)
+        cell.isMarked = false
+        elCell.innerHTML = ''
+        gMines++
+        renderAmountOfMines()
+    }
 }
 
 function getRandomPos() {
@@ -113,12 +132,12 @@ function getRandomPos() {
 function randomMines() {
     for (var i = 0; i < gMines; i++) {
         var randomCellPos = getRandomPos() // {i:2, j:3}
-
-        if (gBoard[randomCellPos.i][randomCellPos.j].isMine === true) continue
-
-        else if (!gBoard[randomCellPos.i][randomCellPos.j].isMine) {
-            gBoard[randomCellPos.i][randomCellPos.j].isMine = true
+        //if the cell is mine try again
+        if (gBoard[randomCellPos.i][randomCellPos.j].isMine) {
+            i--
         }
+        //place a mine in an empty cell
+        gBoard[randomCellPos.i][randomCellPos.j].isMine = true
     }
     renderBoard(gBoard)
     setMinesNegsCount(gBoard)
