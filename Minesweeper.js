@@ -9,7 +9,7 @@ const LIVE = '💗'
 
 var gBoard
 var gButton
-var gMines = 2
+// var gMines
 
 var gLevel = {
     size: 4,
@@ -32,6 +32,7 @@ function onInit() {
     renderBoard(gBoard)
     setMinesNegsCount(gBoard)
     console.log(gBoard)
+    renderAmountOfMines()
 
 
     randomMines()
@@ -93,32 +94,63 @@ function onCellClicked(elCell, i, j) {
         gButton.innerHTML = SAD
         return
     }
-    // change the if
+
     if (cell.isCovered) {
         cell.isCovered = false
         elCell.innerText = cell.minesAroundCount
         elCell.style.backgroundColor = 'grey'
     }
     // renderAmountOfMines()
+    checkVictory()
 }
 
+
+function onDifficultyClick(elBtn) {
+    gLevel.size = +elBtn.dataset.size
+    gLevel.mines = +elBtn.dataset.mine
+    renderAmountOfMines()
+    onInit()
+
+}
+
+function checkVictory() {
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[0].length; j++) {
+            var cell = gBoard[i][j]
+            if (cell.isCovered && !cell.isMine) return
+
+            if (cell.isMine && !cell.isMarked) return
+        }
+    }
+    document.querySelector('.modal').style.display = 'block'
+    document.querySelector('.modal p').innerText = "You Won!"
+    document.querySelector('.modal p').style.backgroundColor = 'green'
+    gButton = document.querySelector('.face')
+    gButton.innerHTML = WIN
+    return
+
+}
+
+// need to fix the flag on bom tile and on isCoverd
 function setFlag(event, elCell, i, j) {
     event.preventDefault()
     const cell = gBoard[i][j]
     if (cell.isCovered && !cell.isMarked) { // if(true && !false = true)
         cell.isMarked = true
         elCell.innerHTML = FLAG
-        gMines--
+        gLevel.mines--
         renderAmountOfMines()
 
-    } else if (cell.isCovered && cell.isMarked) { //if(true && true)
+    } else if (cell.isCovered || !cell.isMarked) { //if(true && true)
         cell.isMarked = false
         elCell.innerHTML = ''
-        gMines++
+        gLevel.mines++
         renderAmountOfMines()
     }
-}
+    else {
 
+    }
+}
 function getRandomPos() {
     var randomRowIdx = getRandomInt(1, gBoard.length - 1)
     var randomColIdx = getRandomInt(1, gBoard[0].length - 1)
@@ -130,7 +162,7 @@ function getRandomPos() {
 
 //FIX duplicate location
 function randomMines() {
-    for (var i = 0; i < gMines; i++) {
+    for (var i = 0; i < gLevel.mines; i++) {
         var randomCellPos = getRandomPos() // {i:2, j:3}
         //if the cell is mine try again
         if (gBoard[randomCellPos.i][randomCellPos.j].isMine) {
@@ -145,7 +177,7 @@ function randomMines() {
 
 function renderAmountOfMines() {
     var elMines = document.querySelector('h2 span')
-    elMines.innerText = gMines
+    elMines.innerText = gLevel.mines
 }
 
 function setMinesNegsCount(board) {
