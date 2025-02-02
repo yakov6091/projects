@@ -3,41 +3,56 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minesweeper</title>
-    <h1>Minesweeper</h1>
-    <h2>Mines: <span>2</span></h2>
+
+    <title>Touch-Nums</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body onload="onInit()">
-    <button class="face" onclick="onInit()"><span></span></button>
+<body onload="onInitGame()">
+    <h1>Touch 'Em</h1>
+    <h2>Next Number: <span>1</span></h2>
+    <h2 class="completed">Completed!</h2>
 
-    <div class="flag"></div>
+    <table>
+        <tbody>
 
-    <div class="board">
+        </tbody>
 
-    </div>
+    </table>
 
-    <div class="modal">
-        <p>Game Over!</p>
+    <p class="timer">00:000</p>
+    <button class="new-game" onclick="onInitGame()">New Game</button>
 
-    </div>
 
 
     <div class="difficulty">
         <h3>Difficulty</h3>
-        <button class="btn-diff" data-size="4" data-mine="2" onclick="onDifficultyClick(this)">Easy</button>
-        <button class="btn-diff" data-size="5" data-mine="3" onclick="onDifficultyClick(this)">Normal</button>
-        <button class="btn-diff" data-size="6" data-mine="5" onclick="onDifficultyClick(this)">Hard</button>
-
+        <button class="btn-diff" data-size="3" onclick="onDifficultyClick(this)">Easy</button>
+        <button class="btn-diff" data-size="4" onclick="onDifficultyClick(this)">Normal</button>
+        <button class="btn-diff" data-size="5" onclick="onDifficultyClick(this)">Hard</button>
+        <button class="btn-diff" data-size="6" onclick="onDifficultyClick(this)">Very Hard</button>
     </div>
 
 
 
-
-    <script src="Minesweeper.js"></script>
-    <script src="utils.js"></script>
+    <script src="touch-nums.js"></script>
 </body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 </html>
