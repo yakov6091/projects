@@ -153,7 +153,7 @@ function setFlag(event, elCell, i, j) {
 }
 function getRandomPos() {
     var randomRowIdx = getRandomInt(1, gBoard.length - 1)
-    var randomColIdx = getRandomInt(1, gBoard[0].length - 1)
+    var randomColIdx = getRandomInt(1, gBoard.length - 1)
     return {
         i: randomRowIdx,
         j: randomColIdx
