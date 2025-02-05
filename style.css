@@ -36,8 +36,7 @@ h2 {
 .modal p {
     width: 150px;
     height: 50px;
-    margin: 5% auto;
-    background-color: rgb(238, 79, 16);
+    margin: 2% auto;
     border-radius: 10px;
     text-align: center;
     color: rgb(81, 15, 236);
@@ -54,4 +53,9 @@ h2 {
 
 .difficulty {
     color: chocolate;
+}
+
+.life {
+    margin: 0;
+    font-size: 24px;
 }

@@ -5,6 +5,13 @@ function renderCell(location, value) {
     elCell.innerHTML = value
 }
 
+function setLife() {
+    var lifeContainer = document.querySelector('.life')
+    lifeContainer.innerHTML = ''
+    for (var i = 0; i < 3; i++) {
+        lifeContainer.innerHTML += LIVE
+    }
+}
 
 
 

@@ -17,7 +17,6 @@ var gLevel = {
 }
 
 var gGame = {
-
     isOn: false, //true when game is on
     coveredCount: 0, // how many cells are covered
     markedCount: 0, // how many cells are marked (with flag)
@@ -29,18 +28,16 @@ function onInit() {
     gButton = document.querySelector('.face')
     gButton.innerHTML = HAPPY
     gBoard = buildBoard()
-    renderBoard(gBoard)
-    setMinesNegsCount(gBoard)
     console.log(gBoard)
+    setMinesNegsCount(gBoard)
     renderAmountOfMines()
-
-
+    // setLife()
     randomMines()
-
+    renderBoard(gBoard)
 
 }
 
-// console.log(buildBoard())
+console.log(buildBoard())
 function buildBoard() {
     const size = gLevel.size //4
     // console.log(size)
@@ -67,7 +64,6 @@ function renderBoard(mat) {
         strHTML += `<tr>`
         for (var j = 0; j < mat[0].length; j++) {
             // const cell = mat[i][j]
-
             const className = `cell cell-${i}-${j}`
             strHTML += `<td class ="${className}"
                        onclick = "onCellClicked(this,${i},${j})"
@@ -78,6 +74,7 @@ function renderBoard(mat) {
         }
         strHTML += `</tr>`
     }
+    strHTML += '</tbody></table>'
     var elTable = document.querySelector('.board')
     elTable.innerHTML = strHTML
 }
@@ -89,10 +86,14 @@ function onCellClicked(elCell, i, j) {
         // elCell.style.backgroundColor = 'red'
         // elCell.innerHTML = BOMB
         revealMines()
+        cell.isCovered = false
         document.querySelector('.modal').style.display = 'block'
+        document.querySelector('.modal p').innerText = "Game Over!"
+        document.querySelector('.modal p').style.backgroundColor = 'chocolate'
         gButton = document.querySelector('.face')
         gButton.innerHTML = SAD
-        return
+        renderAmountOfMines()
+
     }
 
     if (cell.isCovered) {
@@ -110,12 +111,11 @@ function onDifficultyClick(elBtn) {
     gLevel.mines = +elBtn.dataset.mine
     renderAmountOfMines()
     onInit()
-
 }
 
 function checkVictory() {
     for (var i = 0; i < gBoard.length; i++) {
-        for (var j = 0; j < gBoard[0].length; j++) {
+        for (var j = 0; j < gBoard[i].length; j++) {
             var cell = gBoard[i][j]
             if (cell.isCovered && !cell.isMine) return
 
@@ -127,7 +127,7 @@ function checkVictory() {
     document.querySelector('.modal p').style.backgroundColor = 'green'
     gButton = document.querySelector('.face')
     gButton.innerHTML = WIN
-    return
+    renderAmountOfMines()
 
 }
 
@@ -135,25 +135,34 @@ function checkVictory() {
 function setFlag(event, elCell, i, j) {
     event.preventDefault()
     const cell = gBoard[i][j]
+
+    if (!cell.isCovered && cell.isMine) return
+
     if (cell.isCovered && !cell.isMarked) { // if(true && !false = true)
         cell.isMarked = true
         elCell.innerHTML = FLAG
         gLevel.mines--
-        renderAmountOfMines()
 
-    } else if (cell.isCovered || !cell.isMarked) { //if(true && true)
+
+    } else if (cell.isMarked && cell.isCovered) { //if(true && true)
         cell.isMarked = false
         elCell.innerHTML = ''
         gLevel.mines++
-        renderAmountOfMines()
-    }
-    else {
 
     }
+    renderAmountOfMines()
+
 }
+
+function renderAmountOfMines() {
+    var elMines = document.querySelector('h2 span')
+    elMines.innerText = gLevel.mines
+}
+
 function getRandomPos() {
-    var randomRowIdx = getRandomInt(1, gBoard.length - 1)
-    var randomColIdx = getRandomInt(1, gBoard.length - 1)
+    var randomRowIdx = getRandomInt(0, gBoard.length)
+    var randomColIdx = getRandomInt(0, gBoard.length)
+
     return {
         i: randomRowIdx,
         j: randomColIdx
@@ -175,10 +184,7 @@ function randomMines() {
     setMinesNegsCount(gBoard)
 }
 
-function renderAmountOfMines() {
-    var elMines = document.querySelector('h2 span')
-    elMines.innerText = gLevel.mines
-}
+
 
 function setMinesNegsCount(board) {
     for (var i = 0; i < board.length; i++) {
@@ -204,8 +210,9 @@ function countMinesAround(cellI, cellJ, board) {
 function revealMines() {
     for (var i = 0; i < gBoard.length; i++) {
         for (var j = 0; j < gBoard[0].length; j++) {
-            var tile = gBoard[i][j]
-            if (tile.isMine) {
+            var cell = gBoard[i][j]
+            if (cell.isMine) {
+                cell.isCovered = false
                 var elCell = document.querySelector(`.cell-${i}-${j}`)
                 elCell.innerHTML = BOMB
                 elCell.style.backgroundColor = 'red'
