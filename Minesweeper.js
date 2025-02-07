@@ -17,13 +17,22 @@ var gLevel = {
 }
 
 var gGame = {
-    isOn: false, //true when game is on
+    isOn: true, //true when game is on
     coveredCount: 0, // how many cells are covered
     markedCount: 0, // how many cells are marked (with flag)
-    secsPassed: 0 // how many seconds passed
+    secsPassed: 0, // how many seconds passed
+    markedMinesCount: 0
 }
 
+
 function onInit() {
+    gGame = {
+        isOn: true, //true when game is on
+        coveredCount: 0, // how many cells are covered
+        markedCount: 0, // how many cells are marked (with flag)
+        secsPassed: 0, // how many seconds passed
+        markedMinesCount: 0
+    }
     document.querySelector('.modal').style.display = 'none'
     gButton = document.querySelector('.face')
     gButton.innerHTML = HAPPY
@@ -51,10 +60,11 @@ function buildBoard() {
                 isMine: false,
                 isMarked: false,
             }
+            gGame.coveredCount++
+
         }
     }
-    // board[1][2].isMine = true
-    // board[3][1].isMine = true
+
     return board
 }
 
@@ -67,9 +77,7 @@ function renderBoard(mat) {
             const className = `cell cell-${i}-${j}`
             strHTML += `<td class ="${className}"
                        onclick = "onCellClicked(this,${i},${j})"
-                       oncontextmenu ="setFlag(event,this,${i},${j})">
-
-                       
+                       oncontextmenu ="setFlag(event,this,${i},${j})">      
                        </td>`
         }
         strHTML += `</tr>`
@@ -82,75 +90,74 @@ function renderBoard(mat) {
 //TODO: if is bomb or cell
 function onCellClicked(elCell, i, j) {
     var cell = gBoard[i][j]
-    if (cell.isMine) {
-        // elCell.style.backgroundColor = 'red'
-        // elCell.innerHTML = BOMB
-        revealMines()
-        cell.isCovered = false
-        document.querySelector('.modal').style.display = 'block'
-        document.querySelector('.modal p').innerText = "Game Over!"
-        document.querySelector('.modal p').style.backgroundColor = 'chocolate'
-        gButton = document.querySelector('.face')
-        gButton.innerHTML = SAD
-        renderAmountOfMines()
+    if (!gGame.isOn) return
 
+    if (cell.isMine) {
+        gGame.isOn = false
+        cell.isCovered = false
+        revealMines()
+        gameOver()
     }
 
     if (cell.isCovered) {
         cell.isCovered = false
+        gGame.coveredCount--
         elCell.innerText = cell.minesAroundCount
         elCell.style.backgroundColor = 'grey'
+        checkVictory()
     }
     // renderAmountOfMines()
-    checkVictory()
+
 }
 
+function gameOver() {
+    document.querySelector('.modal').style.display = 'block'
+    document.querySelector('.modal p').innerText = "Game Over!"
+    document.querySelector('.modal p').style.backgroundColor = 'chocolate'
+    gButton = document.querySelector('.face')
+    gButton.innerHTML = SAD
+
+}
 
 function onDifficultyClick(elBtn) {
     gLevel.size = +elBtn.dataset.size
     gLevel.mines = +elBtn.dataset.mine
-    renderAmountOfMines()
     onInit()
 }
 
 function checkVictory() {
-    for (var i = 0; i < gBoard.length; i++) {
-        for (var j = 0; j < gBoard[i].length; j++) {
-            var cell = gBoard[i][j]
-            if (cell.isCovered && !cell.isMine) return
-
-            if (cell.isMine && !cell.isMarked) return
-        }
+    if (gGame.coveredCount === gLevel.mines) {
+        document.querySelector('.modal').style.display = 'block'
+        document.querySelector('.modal p').innerText = "You Won!"
+        document.querySelector('.modal p').style.backgroundColor = 'green'
+        gButton = document.querySelector('.face')
+        gButton.innerHTML = WIN
+        return gGame.isOn = false
     }
-    document.querySelector('.modal').style.display = 'block'
-    document.querySelector('.modal p').innerText = "You Won!"
-    document.querySelector('.modal p').style.backgroundColor = 'green'
-    gButton = document.querySelector('.face')
-    gButton.innerHTML = WIN
-    renderAmountOfMines()
-
 }
 
 // need to fix the flag on bom tile and on isCoverd
 function setFlag(event, elCell, i, j) {
     event.preventDefault()
     const cell = gBoard[i][j]
-
-    if (!cell.isCovered && cell.isMine) return
+    if (!gGame.isOn) return
 
     if (cell.isCovered && !cell.isMarked) { // if(true && !false = true)
         cell.isMarked = true
         elCell.innerHTML = FLAG
-        gLevel.mines--
+        gGame.markedCount++
+        if (cell.isMine) gGame.markedMinesCount++
 
 
     } else if (cell.isMarked && cell.isCovered) { //if(true && true)
         cell.isMarked = false
         elCell.innerHTML = ''
-        gLevel.mines++
+        gGame.markedCount--
+        if (cell.isMine) gGame.markedMinesCount--
 
     }
     renderAmountOfMines()
+
 
 }
 
@@ -171,14 +178,14 @@ function getRandomPos() {
 
 //FIX duplicate location
 function randomMines() {
+    //TODO:function  get empty cell (bingo)
     for (var i = 0; i < gLevel.mines; i++) {
         var randomCellPos = getRandomPos() // {i:2, j:3}
         //if the cell is mine try again
-        if (gBoard[randomCellPos.i][randomCellPos.j].isMine) {
-            i--
+        if (!gBoard[randomCellPos.i][randomCellPos.j].isMine) {
+
+            gBoard[randomCellPos.i][randomCellPos.j].isMine = true
         }
-        //place a mine in an empty cell
-        gBoard[randomCellPos.i][randomCellPos.j].isMine = true
     }
     renderBoard(gBoard)
     setMinesNegsCount(gBoard)
