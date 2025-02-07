@@ -13,6 +13,26 @@ function setLife() {
     }
 }
 
+function gameOver() {
+    document.querySelector('.modal').style.display = 'block'
+    document.querySelector('.modal p').innerText = "Game Over!"
+    document.querySelector('.modal p').style.backgroundColor = 'chocolate'
+    gButton = document.querySelector('.face')
+    gButton.innerHTML = SAD
+
+}
+
+
+function checkVictory() {
+    if (gGame.coveredCount === gLevel.mines) {
+        document.querySelector('.modal').style.display = 'block'
+        document.querySelector('.modal p').innerText = "You Won!"
+        document.querySelector('.modal p').style.backgroundColor = 'green'
+        gButton = document.querySelector('.face')
+        gButton.innerHTML = WIN
+        return gGame.isOn = false
+    }
+}
 
 
 function getRandomInt(min, max) {

@@ -46,7 +46,6 @@ function onInit() {
 
 }
 
-console.log(buildBoard())
 function buildBoard() {
     const size = gLevel.size //4
     // console.log(size)
@@ -61,10 +60,8 @@ function buildBoard() {
                 isMarked: false,
             }
             gGame.coveredCount++
-
         }
     }
-
     return board
 }
 
@@ -87,7 +84,7 @@ function renderBoard(mat) {
     elTable.innerHTML = strHTML
 }
 
-//TODO: if is bomb or cell
+
 function onCellClicked(elCell, i, j) {
     var cell = gBoard[i][j]
     if (!gGame.isOn) return
@@ -97,25 +94,45 @@ function onCellClicked(elCell, i, j) {
         cell.isCovered = false
         revealMines()
         gameOver()
+        return
     }
 
     if (cell.isCovered) {
         cell.isCovered = false
         gGame.coveredCount--
-        elCell.innerText = cell.minesAroundCount
+        elCell.innerText = cell.minesAroundCount || ''
         elCell.style.backgroundColor = 'grey'
         checkVictory()
     }
-    // renderAmountOfMines()
+    expandUncover(i, j)
 
 }
 
-function gameOver() {
-    document.querySelector('.modal').style.display = 'block'
-    document.querySelector('.modal p').innerText = "Game Over!"
-    document.querySelector('.modal p').style.backgroundColor = 'chocolate'
-    gButton = document.querySelector('.face')
-    gButton.innerHTML = SAD
+function expandUncover(cellI, cellJ) {
+    if (gBoard[cellI][cellJ].minesAroundCount !== 0) return
+    for (var i = cellI - 1; i <= cellI + 1; i++) {
+        if (i < 0 || i >= gBoard.length) continue
+
+        for (var j = cellJ - 1; j <= cellJ + 1; j++) {
+            if (i === cellI && j === cellJ) continue
+            if (j < 0 || j >= gBoard[i].length) continue
+
+            const currCell = gBoard[i][j]
+            var elCurrCell = document.querySelector(`.cell-${i}-${j}`)
+
+            if (!currCell.isCovered || currCell.isMine) continue
+            currCell.isCovered = false
+            elCurrCell.style.backgroundColor = 'grey'
+
+
+            if (currCell.minesAroundCount === 0) {
+                elCurrCell.innerHTML = ''
+                expandUncover(i, j)
+            } else {
+                elCurrCell.innerHTML = currCell.minesAroundCount
+            }
+        }
+    }
 
 }
 
@@ -125,18 +142,6 @@ function onDifficultyClick(elBtn) {
     onInit()
 }
 
-function checkVictory() {
-    if (gGame.coveredCount === gLevel.mines) {
-        document.querySelector('.modal').style.display = 'block'
-        document.querySelector('.modal p').innerText = "You Won!"
-        document.querySelector('.modal p').style.backgroundColor = 'green'
-        gButton = document.querySelector('.face')
-        gButton.innerHTML = WIN
-        return gGame.isOn = false
-    }
-}
-
-// need to fix the flag on bom tile and on isCoverd
 function setFlag(event, elCell, i, j) {
     event.preventDefault()
     const cell = gBoard[i][j]
@@ -146,19 +151,14 @@ function setFlag(event, elCell, i, j) {
         cell.isMarked = true
         elCell.innerHTML = FLAG
         gGame.markedCount++
-        if (cell.isMine) gGame.markedMinesCount++
-
 
     } else if (cell.isMarked && cell.isCovered) { //if(true && true)
         cell.isMarked = false
         elCell.innerHTML = ''
         gGame.markedCount--
-        if (cell.isMine) gGame.markedMinesCount--
 
     }
     renderAmountOfMines()
-
-
 }
 
 function renderAmountOfMines() {
@@ -190,8 +190,6 @@ function randomMines() {
     renderBoard(gBoard)
     setMinesNegsCount(gBoard)
 }
-
-
 
 function setMinesNegsCount(board) {
     for (var i = 0; i < board.length; i++) {
