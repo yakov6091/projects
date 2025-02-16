@@ -8,9 +8,19 @@ function renderCell(location, value) {
 function setLife() {
     var lifeContainer = document.querySelector('.life')
     lifeContainer.innerHTML = ''
-    for (var i = 0; i < 3; i++) {
+    for (var i = 0; i < gLevel.lives; i++) {
         lifeContainer.innerHTML += LIVE
     }
+
+}
+
+function removeHint() {
+    var lifeContainer = document.querySelector('.hints')
+    lifeContainer.innerHTML = ''
+    for (var i = 0; i < gLevel.hints; i++) {
+        lifeContainer.innerHTML += '💡'
+    }
+
 }
 
 function gameOver() {
@@ -19,9 +29,7 @@ function gameOver() {
     document.querySelector('.modal p').style.backgroundColor = 'chocolate'
     gButton = document.querySelector('.face')
     gButton.innerHTML = SAD
-
 }
-
 
 function checkVictory() {
     if (gGame.coveredCount === gLevel.mines) {
@@ -30,7 +38,7 @@ function checkVictory() {
         document.querySelector('.modal p').style.backgroundColor = 'green'
         gButton = document.querySelector('.face')
         gButton.innerHTML = WIN
-        return gGame.isOn = false
+        gGame.isOn = false
     }
 }
 

@@ -11,8 +11,15 @@
 </head>
 
 <body onload="onInit()">
-    <button class="face" onclick="onInit()"></button>
+    <button class="face" onclick="resetButton()"></button>
+
     <div class="life"></div>
+
+    <div class="hints">
+        <span class="hint-1" onclick="onHintClick(this)">💡</span>
+        <span class="hint-2" onclick="onHintClick(this)">💡</span>
+        <span class="hint-3" onclick="onHintClick(this)">💡</span>
+    </div>
 
     <div class="flag"></div>
 
@@ -26,9 +33,9 @@
 
     <div class="difficulty">
         <h3>Difficulty</h3>
-        <button class="btn-diff" data-size="4" data-mine="2" onclick="onDifficultyClick(this)">Easy</button>
-        <button class="btn-diff" data-size="5" data-mine="3" onclick="onDifficultyClick(this)">Normal</button>
-        <button class="btn-diff" data-size="6" data-mine="5" onclick="onDifficultyClick(this)">Hard</button>
+        <button data-difficulty="easy" data-size="4" data-mine="2" onclick="onDifficultyClick(this)">Easy</button>
+        <button data-difficulty="medium" data-size="5" data-mine="3" onclick="onDifficultyClick(this)">Normal</button>
+        <button data-difficulty="hard" data-size="6" data-mine="5" onclick="onDifficultyClick(this)">Hard</button>
 
     </div>
 

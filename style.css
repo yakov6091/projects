@@ -29,8 +29,6 @@ h2 {
     text-align: center;
     cursor: pointer;
     color: #333;
-
-
 }
 
 .modal p {
@@ -56,6 +54,12 @@ h2 {
 }
 
 .life {
-    margin: 0;
+    margin: 10px;
     font-size: 24px;
+}
+
+.hints {
+    margin: 10px;
+    font-size: 24px;
+    cursor: pointer;
 }

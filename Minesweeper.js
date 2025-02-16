@@ -7,23 +7,20 @@ const WIN = '😎'
 const HINT = '💡'
 const LIVE = '💗'
 
+
+
 var gBoard
 var gButton
-// var gMines
+var gGame
+var gInterval
+
 
 var gLevel = {
     size: 4,
-    mines: 2
+    mines: 2,
+    lives: 1,
+    hints: 3
 }
-
-var gGame = {
-    isOn: true, //true when game is on
-    coveredCount: 0, // how many cells are covered
-    markedCount: 0, // how many cells are marked (with flag)
-    secsPassed: 0, // how many seconds passed
-    markedMinesCount: 0
-}
-
 
 function onInit() {
     gGame = {
@@ -31,20 +28,31 @@ function onInit() {
         coveredCount: 0, // how many cells are covered
         markedCount: 0, // how many cells are marked (with flag)
         secsPassed: 0, // how many seconds passed
-        markedMinesCount: 0
+        isHintActive: false, // Track if a hint is active
+        hintsUsed: 0 // Track number of hints used
     }
     document.querySelector('.modal').style.display = 'none'
     gButton = document.querySelector('.face')
     gButton.innerHTML = HAPPY
     gBoard = buildBoard()
     console.log(gBoard)
+
+
     setMinesNegsCount(gBoard)
     renderAmountOfMines()
-    // setLife()
     randomMines()
     renderBoard(gBoard)
+    setLife()
+
+
 
 }
+// function resetButton(){
+//     gButton = document.querySelector('.face')
+//     gButton.innerHTML = HAPPY
+//     onInit()
+
+// }
 
 function buildBoard() {
     const size = gLevel.size //4
@@ -62,6 +70,7 @@ function buildBoard() {
             gGame.coveredCount++
         }
     }
+
     return board
 }
 
@@ -79,6 +88,7 @@ function renderBoard(mat) {
         }
         strHTML += `</tr>`
     }
+
     strHTML += '</tbody></table>'
     var elTable = document.querySelector('.board')
     elTable.innerHTML = strHTML
@@ -89,12 +99,22 @@ function onCellClicked(elCell, i, j) {
     var cell = gBoard[i][j]
     if (!gGame.isOn) return
 
+
     if (cell.isMine) {
-        gGame.isOn = false
+        gLevel.lives--
+        setLife()
+
         cell.isCovered = false
-        revealMines()
-        gameOver()
+        elCell.innerHTML = FLAG
+
+
+        if (gLevel.lives === 0) {
+            gGame.isOn = false
+            revealMines()
+            gameOver()
+        }
         return
+
     }
 
     if (cell.isCovered) {
@@ -104,10 +124,11 @@ function onCellClicked(elCell, i, j) {
         elCell.style.backgroundColor = 'grey'
         checkVictory()
     }
-    expandUncover(i, j)
 
+    expandUncover(i, j)
 }
 
+//explain to me how the function works
 function expandUncover(cellI, cellJ) {
     if (gBoard[cellI][cellJ].minesAroundCount !== 0) return
     for (var i = cellI - 1; i <= cellI + 1; i++) {
@@ -122,6 +143,7 @@ function expandUncover(cellI, cellJ) {
 
             if (!currCell.isCovered || currCell.isMine) continue
             currCell.isCovered = false
+            gGame.coveredCount--
             elCurrCell.style.backgroundColor = 'grey'
 
 
@@ -131,6 +153,7 @@ function expandUncover(cellI, cellJ) {
             } else {
                 elCurrCell.innerHTML = currCell.minesAroundCount
             }
+            checkVictory()
         }
     }
 
@@ -139,6 +162,15 @@ function expandUncover(cellI, cellJ) {
 function onDifficultyClick(elBtn) {
     gLevel.size = +elBtn.dataset.size
     gLevel.mines = +elBtn.dataset.mine
+    if (elBtn.dataset.difficulty === 'easy') {
+        gLevel.lives = 1
+    }
+    else if (elBtn.dataset.difficulty === 'medium') {
+        gLevel.lives = 2
+    }
+    else if (elBtn.dataset.difficulty === 'hard') {
+        gLevel.lives = 3
+    }
     onInit()
 }
 
@@ -159,6 +191,7 @@ function setFlag(event, elCell, i, j) {
 
     }
     renderAmountOfMines()
+    checkVictory()
 }
 
 function renderAmountOfMines() {
